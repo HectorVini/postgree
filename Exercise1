@@ -1,0 +1,18 @@
+create table Convenio(
+  CodConv char(4) not null,
+  NomeConv varchar(50) not null,
+  constraint pk_cod_conv primary key(CodConv),
+  constraint ukNomeConv unique(NomeConv)
+);
+
+
+create table Paciente(
+  CodPac char(4) not null,
+  NomePac varchar(50) not null,
+  Endereco varchar(50) not null,
+  CodConv varchar(50) not null,
+  constraint PKPaciente primary key(CodPac),
+  constraint UKPaciente unique(NomePac),
+  constraint FKPaciente foreign key(CodConv) references
+  Paciente
+);
