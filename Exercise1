@@ -1,4 +1,4 @@
-create table Convenio(
+1)create table Convenio(
   CodConv char(4) not null,
   NomeConv varchar(50) not null,
   constraint pk_cod_conv primary key(CodConv),
