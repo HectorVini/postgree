@@ -16,3 +16,45 @@ create table Paciente(
   constraint FKPaciente foreign key(CodConv) references
   Paciente
 );
+
+create table Medicamento(
+  CodMedic char(4) not null,
+  NomeMedic varchar(50) not null,
+  constraint pk_cod_medic primary key(CodMedic),
+  constraint ukNomeMedic unique(NomeMedic)
+);
+
+create table Especialidade(
+  CodEspec char(4) not null,
+  NomeEspec varchar(50) not null,
+  constraint pk_cod_espec primary key(CodEspec)
+);
+
+create table Medico(
+  CodMedico char(4) not null,
+  NomeMedico varchar(50) not null,
+  CodEspec char(4) not null,
+  constraint pk_cod_medico primary key(CodMedico),
+  constraint FKCodEspec foreign key(CodEspec) references 
+  especialidade(CodEspec) on delete cascade on update set null
+);
+
+create table Consulta(
+  CodPac char(4) not null,
+  DataHora timestamp check(DataHora<now()),
+  CodMed char(4) not null,
+  Diagnostico varchar(20) not null,
+  Preco decimal(5,2),
+  Pago integer default 1;
+  constraint FK1CodPac foreign key(CodPac) references
+  Paciente(CodPac),
+  constraint FK2CodMed foreign key(CodMed) references
+  Medico(CodMedico)
+);
+
+
+
+
+
+
+
