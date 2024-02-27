@@ -41,15 +41,26 @@ create table Medico(
 
 create table Consulta(
   CodPac char(4) not null,
-  DataHora timestamp check(DataHora<now()),
+  DataHora timestamp default now() check(DataHora<=now()),
   CodMed char(4) not null,
   Diagnostico varchar(20) not null,
   Preco decimal(5,2),
-  Pago integer default 1;
+  Pago integer default 1,
   constraint FK1CodPac foreign key(CodPac) references
   Paciente(CodPac),
   constraint FK2CodMed foreign key(CodMed) references
   Medico(CodMedico)
+  
+);
+
+CREATE TABLE Receita (
+    CodPac char(4) not null,
+    DataHora TIMESTAMP,
+    CodMedic char(4),
+    Qtde INT,
+    PRIMARY KEY (CodPac, DataHora),
+    FOREIGN KEY (CodPac, DataHora) REFERENCES Consulta(CodPac, DataHora),
+    FOREIGN KEY (CodMedic) REFERENCES Medicamento(CodMedic)
 );
 
 
