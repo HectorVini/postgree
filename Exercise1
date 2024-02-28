@@ -1,5 +1,5 @@
 1)create table Convenio(
-  CodConv char(4) not null,
+  CodConv char(4),
   NomeConv varchar(50) not null,
   constraint pk_cod_conv primary key(CodConv),
   constraint ukNomeConv unique(NomeConv)
@@ -14,7 +14,7 @@ create table Paciente(
   constraint PKPaciente primary key(CodPac),
   constraint UKPaciente unique(NomePac),
   constraint FKPaciente foreign key(CodConv) references
-  Paciente
+  Convenio(CodConv)
 );
 
 create table Medicamento(
@@ -32,7 +32,7 @@ create table Especialidade(
 
 create table Medico(
   CodMedico char(4) not null,
-  NomeMedico varchar(50) not null,
+  NomeMed varchar(50) not null,
   CodEspec char(4) not null,
   constraint pk_cod_medico primary key(CodMedico),
   constraint FKCodEspec foreign key(CodEspec) references 
@@ -48,6 +48,7 @@ create table Consulta(
   Pago integer default 1,
   constraint FK1CodPac foreign key(CodPac) references
   Paciente(CodPac),
+  primary key(CodPac,DataHora),
   constraint FK2CodMed foreign key(CodMed) references
   Medico(CodMedico)
   
@@ -62,6 +63,143 @@ CREATE TABLE Receita (
     FOREIGN KEY (CodPac, DataHora) REFERENCES Consulta(CodPac, DataHora),
     FOREIGN KEY (CodMedic) REFERENCES Medicamento(CodMedic)
 );
+List of relations
+ Schema |     Name      | Type  |  Owner   
+--------+---------------+-------+----------
+ public | consulta      | table | postgres
+ public | convenio      | table | postgres
+ public | especialidade | table | postgres
+ public | medicamento   | table | postgres
+ public | medico        | table | postgres
+ public | paciente      | table | postgres
+ public | receita       | table | postgres
+(7 rows)
+
+2)drop table medicamento, receita cascade;
+List of relations
+ Schema |     Name      | Type  |  Owner   
+--------+---------------+-------+----------
+ public | consulta      | table | postgres
+ public | convenio      | table | postgres
+ public | especialidade | table | postgres
+ public | medico        | table | postgres
+ public | paciente      | table | postgres
+(5 rows)
+
+3)
+--Tabela Convenio
+Insert into convenio (CodConv,NomeConv) values('001','Sus');
+codconv | nomeconv 
+---------+----------
+ 001     | Sus
+
+--Tabela Paciente
+Insert into Paciente(codpac,nomepac,endereco,codconv) values('01','Astolfo','Rua Quinze','01');
+codpac | nomepac |  endereco  | codconv 
+--------+---------+------------+---------
+ 01     | Astolfo | Rua Quinze | 001
+
+--Tabela Especialidade
+Insert into Especialidade(codespec,nomeespec) values('031','Cirurgião Plástico');
+codespec |     nomeespec      
+----------+--------------------
+ 031      | Cirurgião Plástico
+
+--Tabela Medico
+Insert into Medico(codmedico,nomemedico,codespec) values('021','Dr.Herbert','031');
+codmedico | nomemed | codespec 
+-----------+------------+----------
+ 021       | Dr.Herbert | 031 
+
+--Tabela Consulta
+Insert into Consulta(codpac,datahora,codmed,diagnostico,preco,pago) values('001',current_timestamp,'021','nenhum',000.00,0);
+codpac |          datahora          | codmed | diagnostico | preco | pago 
+--------+----------------------------+--------+-------------+-------+------
+ 001    | 2024-02-27 20:45:38.860933 | 021    | nenhum      |  0.00 |    0
+
+4)truncate table paciente;
+codpac | nomepac | endereco | codconv 
+--------+---------+----------+---------
+(0 rows)
+
+5)Insert into Paciente(codpac,nomepac,endereco,codconv) values('02','Jamilson','Av Pereira Texeira','001');
+codpac | nomepac  |      endereco      | codconv 
+--------+----------+--------------------+---------
+ 02     | Jamilson | Av Pereira Texeira | 001
+(1 row)
+
+6)delete from paciente where endereco != 'Barbacena';
+--Exemplo de uso
+--Antes do comando
+codpac | nomepac  |     endereco     | codconv 
+--------+----------+------------------+---------
+ 02     | Jamilson | Barbacena        | 001
+ 03     | Ademar   | São João Del Rei | 001
+(2 rows)
+--Após o comando
+codpac | nomepac  | endereco  | codconv 
+--------+----------+-----------+---------
+ 02     | Jamilson | Barbacena | 001
+(1 row)
+
+7)create unique index UKMedico on Medico(NomeMed);
+8)create index ISPaciente on Paciente(nomepac,endereco);
+9)drop index ISPaciente;
+10)drop index UKMedico;
+11)create index EstMedico on Medico(NomeMedico);
+12)alter table consulta alter column DataHora drop default;
+13)alter table consulta alter column DataHora set default now();
+14)alter table paciente add column Telefone varchar(10);
+codpac | nomepac  | endereco  | codconv | telefone 
+--------+----------+-----------+---------+----------
+ 02     | Jamilson | Barbacena | 001     | 
+(1 row)
+
+15)alter table paciente drop column nomepac;
+codpac | endereco  | codconv | telefone 
+--------+-----------+---------+----------
+ 02     | Barbacena | 001     | 
+(1 row)
+
+16)alter table paciente add column nomepac varchar(50);
+codpac | endereco  | codconv | telefone | nomepac 
+--------+-----------+---------+----------+---------
+ 02     | Barbacena | 001     |          | 
+(1 row)
+
+17)alter table medico alter column nomemedic set not null;
+18)alter table consulta alter column Preco type decimal(5,2);
+19)truncate table paciente;
+codpac | endereco | codconv | telefone | nomepac 
+--------+----------+---------+----------+---------
+(0 rows)
+
+20)delete from consulta where codmed = '1';
+--Exemplo
+--Antes do comando
+codpac |          datahora          | codmed | diagnostico | preco | pago 
+--------+----------------------------+--------+-------------+-------+------
+ 001    | 2024-02-27 20:45:38.860933 | 021    | nenhum      |  0.00 |    0
+ 002    | 2024-02-27 23:42:06.833855 | 021    | amigdalite  |  0.00 |    0
+ 003    | 2024-02-27 23:46:47.069609 | 1      | sífilis     |  0.00 |    0
+ 004    | 2024-02-27 23:49:37.957558 | 1      | gonorreia   |  0.00 |    0
+(4 rows)
+--Após o comando
+codpac |          datahora          | codmed | diagnostico | preco | pago 
+--------+----------------------------+--------+-------------+-------+------
+ 001    | 2024-02-27 20:45:38.860933 | 021    | nenhum      |  0.00 |    0
+ 002    | 2024-02-27 23:42:06.833855 | 021    | amigdalite  |  0.00 |    0
+(2 rows)
+--Obs: Para adicionar campos difefentes em codmed, precisou remover a constraint 'fk2codmed' que sinalizava ser uma
+--chave estrangeira na tabela consulta referencida na tabela medico, logo: alter table consulta drop constraint fk2codmed;
+
+21)
+
+
+
+
+
+
 
 
 
