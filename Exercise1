@@ -324,7 +324,10 @@ codpac |     endereco     | codconv | telefone  |     nomepac
  05     | Barbacena        | 002     | 9428-1320 | Ilma Campos
 (4 rows)
 
-27)select * from paciente where codconv = '002' and endereco = 'Barbacena';
+27)select nomepac
+from paciente inner join convenios
+on paciente.codconv=convenios.codconv
+where nomeconv='Cobre Tudo' and Endereco like '%Barbacena%&';
 --Exemplo de listagem dos pacientes geral
  codpac |     endereco     | codconv | telefone  |     nomepac     
 --------+------------------+---------+-----------+-----------------
@@ -335,11 +338,10 @@ codpac |     endereco     | codconv | telefone  |     nomepac
  05     | Barbacena        | 002     | 9428-1320 | Ilma Campos
 (5 rows)
 --Listagem após o comando
-codpac | endereco  | codconv | telefone  |   nomepac   
---------+-----------+---------+-----------+-------------
- 03     | Barbacena | 002     | 5476-7223 | José Alguém
- 05     | Barbacena | 002     | 9428-1320 | Ilma Campos
-(2 rows)
+nomepac 
+---------
+(0 rows)
+
 
 28)select distinct DataHora from consulta inner join
 medico on consulta.codmed=medico.codmed where nomemedico='Dr.Fera';
@@ -421,8 +423,10 @@ nomeconv
 ----------
 (0 rows)
 
-32)Todos os convênios das tabelas citadas estão sendo usados.
-33)select NomeEspec from especialidade inner join
+32)select nomeconv from Convenios where codconv not in(select codconv from
+consulta inner join Paciente on(consulta.codpac=Paciente.codpac)) order by
+nomeconv desc
+33)select distinct NomeEspec from especialidade inner join
 medico on medico.codespec=especialidade.codespec;
 --Dada as tabelas
 --Especialidade
@@ -574,7 +578,17 @@ nomemedico
  Dr.Herbert
 (2 rows)
 
+44)select distinct nomeespec
+from ((especialidade inner join medico
+on especialidade.codespec=medico.codespec)
+inner join consulta on
+medico.codmedico=consulta.codmed)
 
+45)select nomeespec
+from especialidade inner join medico
+on especialidade.codespec=medico.codespec
+group by nomeespec
+having count(nomeespec)&gt;2
 
 
 
