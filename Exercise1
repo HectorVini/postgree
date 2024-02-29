@@ -538,12 +538,23 @@ nomepac     |  nomeconv
  Maria do Bonfim | Cobre tudo
 (4 rows)
 
-38)Nas tabelas registradas um paciente não foi atendido mais de uma vez
-39)
---Dúvida nessa questão
-select nomemedico from medico inner join consulta
-on medico.codmed=consulta.codmed where codmed > any select
-codmed from consulta where codmed='3';
+38)select distinct nomepac, sum(precoconsulta)
+from (paciente inner join consulta on paciente.codpac=consulta.codpac)
+group by nomepac
+order by count(nomepac) desc
+limit 1
+--Exemplo após o comando
+nomepac   |  sum  
+-------------+-------
+ Ilma Campos | 32.99
+(1 row)
+
+39)elect distinct nomepac, sum(precoconsulta)
+from (paciente inner join consulta on paciente.codpac=consulta.codpac)
+group by nomepac
+order by count(nomepac) asc
+limit 1;
+
 40)Nenhum paciente consultou mais de uma vez.
 41)select nomemedico from medico inner join
 consulta on medico.codmed=consulta.codmed inner join
