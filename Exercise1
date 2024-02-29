@@ -193,7 +193,389 @@ codpac |          datahora          | codmed | diagnostico | preco | pago
 --Obs: Para adicionar campos difefentes em codmed, precisou remover a constraint 'fk2codmed' que sinalizava ser uma
 --chave estrangeira na tabela consulta referencida na tabela medico, logo: alter table consulta drop constraint fk2codmed;
 
-21)
+21)--Consultando a tabela medico
+codmed |  nomemedico  | codespec 
+--------+--------------+----------
+ 021    | Dr.Herbert   | 031 
+ 3      | Dr.Sabe Nada | 031 
+--Fazendo a remoção na tabela consulta pelo codmed
+DELETE FROM consulta where codmed = '3';
+--Antes do comando
+codpac |          datahora          | codmed | diagnostico | preco | pago 
+--------+----------------------------+--------+-------------+-------+------
+ 001    | 2024-02-27 20:45:38.860933 | 021    | nenhum      |  0.00 |    0
+ 002    | 2024-02-27 23:42:06.833855 | 021    | amigdalite  |  0.00 |    0
+ 003    | 2024-02-28 18:58:30.076687 | 3      | nenhum      |  0.00 |    0
+(3 rows)
+--Após o comando
+codpac |          datahora          | codmed | diagnostico | preco | pago 
+--------+----------------------------+--------+-------------+-------+------
+ 001    | 2024-02-27 20:45:38.860933 | 021    | nenhum      |  0.00 |    0
+ 002    | 2024-02-27 23:42:06.833855 | 021    | amigdalite  |  0.00 |    0
+(2 rows)
+
+22)alter table consulta rename Preco to PrecoConsulta;
+--Antes do comando
+codpac |          datahora          | codmed | diagnostico | preco | pago 
+--------+----------------------------+--------+-------------+-------+------
+ 001    | 2024-02-27 20:45:38.860933 | 021    | nenhum      |  0.00 |    0
+ 002    | 2024-02-27 23:42:06.833855 | 021    | amigdalite  |  0.00 |    0
+(2 rows)
+--Após o comando
+codpac |          datahora          | codmed | diagnostico | precoconsulta | pago 
+--------+----------------------------+--------+-------------+---------------+------
+ 001    | 2024-02-27 20:45:38.860933 | 021    | nenhum      |          0.00 |    0
+ 002    | 2024-02-27 23:42:06.833855 | 021    | amigdalite  |          0.00 |    0
+(2 rows)
+
+23)alter table Convenio rename to Convenios;
+--Antes do comando
+List of relations
+ Schema |     Name      | Type  |  Owner   
+--------+---------------+-------+----------
+ public | consulta      | table | postgres
+ public | convenio      | table | postgres
+ public | especialidade | table | postgres
+ public | medico        | table | postgres
+ public | paciente      | table | postgres
+(5 rows)
+--Após o comando
+List of relations
+ Schema |     Name      | Type  |  Owner   
+--------+---------------+-------+----------
+ public | consulta      | table | postgres
+ public | convenios     | table | postgres
+ public | especialidade | table | postgres
+ public | medico        | table | postgres
+ public | paciente      | table | postgres
+(5 rows)
+
+24)update consulta set precoconsulta = precoconsulta*(30.00/100.00)+precoconsulta where codmed = '2';
+--Exemplos
+--Antes do comando
+codpac |          datahora          | codmed |     diagnostico     | precoconsulta | pago 
+--------+----------------------------+--------+---------------------+---------------+------
+ 001    | 2024-02-27 20:45:38.860933 | 021    | nenhum              |          0.00 |    0
+ 002    | 2024-02-27 23:42:06.833855 | 021    | amigdalite          |          0.00 |    0
+ 005    | 2024-02-28 19:24:55.310173 | 4      | doença terminal     |        721.44 |    1
+ 004    | 2024-02-28 19:22:50.77663  | 2      | insuficiência renal |        303.00 |    1
+ 005    | 2024-02-28 19:24:05.818973 | 2      | doença terminal     |        303.00 |    1
+(5 rows)
+--Após o comando
+codpac |          datahora          | codmed |     diagnostico     | precoconsulta | pago 
+--------+----------------------------+--------+---------------------+---------------+------
+ 001    | 2024-02-27 20:45:38.860933 | 021    | nenhum              |          0.00 |    0
+ 002    | 2024-02-27 23:42:06.833855 | 021    | amigdalite          |          0.00 |    0
+ 005    | 2024-02-28 19:24:55.310173 | 4      | doença terminal     |        721.44 |    1
+ 004    | 2024-02-28 19:22:50.77663  | 2      | insuficiência renal |        393.90 |    1
+ 005    | 2024-02-28 19:24:05.818973 | 2      | doença terminal     |        393.90 |    1
+(5 rows)
+
+25)update consulta set precoconsulta = precoconsulta*(30.00/100.00)+precoconsulta where codmed = '4';
+--Obs: na tabela medico, observando o codmed;
+codmed |  nomemedico  | codespec 
+--------+--------------+----------
+ 021    | Dr.Herbert   | 031 
+ 3      | Dr.Sabe Nada | 031 
+ 2      | Dr.Noé       | 031 
+ 4      | Dr.Fera      | 031 
+(4 rows)
+--Antes do comando na tabela consulta
+codpac |          datahora          | codmed |     diagnostico     | precoconsulta | pago 
+--------+----------------------------+--------+---------------------+---------------+------
+ 001    | 2024-02-27 20:45:38.860933 | 021    | nenhum              |          0.00 |    0
+ 002    | 2024-02-27 23:42:06.833855 | 021    | amigdalite          |          0.00 |    0
+ 005    | 2024-02-28 19:24:55.310173 | 4      | doença terminal     |        721.44 |    1
+ 004    | 2024-02-28 19:22:50.77663  | 2      | insuficiência renal |        393.90 |    1
+ 005    | 2024-02-28 19:24:05.818973 | 2      | doença terminal     |        393.90 |    1
+(5 rows)
+--Após o comando
+codpac |          datahora          | codmed |     diagnostico     | precoconsulta | pago 
+--------+----------------------------+--------+---------------------+---------------+------
+ 001    | 2024-02-27 20:45:38.860933 | 021    | nenhum              |          0.00 |    0
+ 002    | 2024-02-27 23:42:06.833855 | 021    | amigdalite          |          0.00 |    0
+ 004    | 2024-02-28 19:22:50.77663  | 2      | insuficiência renal |        393.90 |    1
+ 005    | 2024-02-28 19:24:05.818973 | 2      | doença terminal     |        393.90 |    1
+ 005    | 2024-02-28 19:24:55.310173 | 4      | doença terminal     |        937.87 |    1
+(5 rows)
+
+26)select * from paciente where codconv = '002';
+--Obs: Na tabela convenios, 'Cobre Tudo' foi definido dessa forma:
+ codconv |  nomeconv  
+---------+------------
+ 001     | Sus
+ 002     | Cobre tudo
+(2 rows)
+--Exemplo de listagem dos pacientes da tabela em geral
+codpac |     endereco     | codconv | telefone  |     nomepac     
+--------+------------------+---------+-----------+-----------------
+ 01     | Barbacena        | 001     | 9876-7123 | Barbara
+ 02     | Ritápolis        | 002     | 5476-7223 | João Ninguém
+ 03     | Barbacena        | 002     | 5476-7223 | José Alguém
+ 04     | São João Del-Rei | 002     | 9421-4220 | Maria do Bonfim
+ 05     | Barbacena        | 002     | 9428-1320 | Ilma Campos
+(5 rows)
+-- Listagem após o comando solicitado
+codpac |     endereco     | codconv | telefone  |     nomepac     
+--------+------------------+---------+-----------+-----------------
+ 02     | Ritápolis        | 002     | 5476-7223 | João Ninguém
+ 03     | Barbacena        | 002     | 5476-7223 | José Alguém
+ 04     | São João Del-Rei | 002     | 9421-4220 | Maria do Bonfim
+ 05     | Barbacena        | 002     | 9428-1320 | Ilma Campos
+(4 rows)
+
+27)select * from paciente where codconv = '002' and endereco = 'Barbacena';
+--Exemplo de listagem dos pacientes geral
+ codpac |     endereco     | codconv | telefone  |     nomepac     
+--------+------------------+---------+-----------+-----------------
+ 01     | Barbacena        | 001     | 9876-7123 | Barbara
+ 02     | Ritápolis        | 002     | 5476-7223 | João Ninguém
+ 03     | Barbacena        | 002     | 5476-7223 | José Alguém
+ 04     | São João Del-Rei | 002     | 9421-4220 | Maria do Bonfim
+ 05     | Barbacena        | 002     | 9428-1320 | Ilma Campos
+(5 rows)
+--Listagem após o comando
+codpac | endereco  | codconv | telefone  |   nomepac   
+--------+-----------+---------+-----------+-------------
+ 03     | Barbacena | 002     | 5476-7223 | José Alguém
+ 05     | Barbacena | 002     | 9428-1320 | Ilma Campos
+(2 rows)
+
+28)select distinct DataHora from consulta inner join
+medico on consulta.codmed=medico.codmed where nomemedico='Dr.Fera';
+datahora          
+----------------------------
+ 2024-02-28 19:24:55.310173
+ 2008-08-01 00:00:00
+ 2008-12-10 00:00:00
+ 2008-12-09 00:00:00
+ 2009-02-10 00:00:00
+(5 rows)
+
+29)SELECT DISTINCT nomepac from paciente inner join consulta
+ON paciente.codpac=consulta.codpac where DataHora between date'2008-08-01' and date'2008-12-10';
+--Exemplo de tabela consulta
+codpac |      datahora       | codmed | diagnostico | precoconsulta | pago 
+--------+---------------------+--------+-------------+---------------+------
+ 05     | 2008-08-01 00:00:00 | 4      | nenhum      |         32.99 |    0
+ 02     | 2008-12-09 00:00:00 | 4      | resfriado   |         31.99 |    0
+ 03     | 2008-12-10 00:00:00 | 4      | resfriado   |         22.00 |    0
+ 04     | 2009-02-10 00:00:00 | 4      | resfriado   |         22.00 |    0
+--Exemplo de tabela paciente
+codpac |     endereco     | codconv | telefone  |     nomepac     
+--------+------------------+---------+-----------+-----------------
+ 01     | Barbacena        | 001     | 9876-7123 | Barbara
+ 02     | Ritápolis        | 002     | 5476-7223 | João Ninguém
+ 03     | Barbacena        | 002     | 5476-7223 | José Alguém
+ 04     | São João Del-Rei | 002     | 9421-4220 | Maria do Bonfim
+ 05     | Barbacena        | 002     | 9428-1320 | Ilma Campos
+--Listagem após o comando
+ nomepac    
+--------------
+ Ilma Campos
+ João Ninguém
+ José Alguém
+(3 rows)
+
+30)select nomepac,precoconsulta as "Preço da consulta" from 
+paciente inner join consulta on paciente.codpac=consulta.codpac;
+--Exemplo de tabelas usadas na questão anterior
+nomepac     | Preço da consulta 
+-----------------+-------------------
+ Ilma Campos     |             32.99
+ João Ninguém    |             31.99
+ José Alguém     |             22.00
+ Maria do Bonfim |             22.00
+(4 rows)
+
+31)SELECT nomeconv from convenios inner join paciente on
+convenios.codconv=paciente.codconv inner join consulta on
+paciente.codpac=consulta.codpac where DataHora = date'2008-01-10';
+--Dada as tabelas
+--Convenios
+codconv |  nomeconv  
+---------+------------
+ 001     | Sus
+ 002     | Cobre tudo
+(2 rows)
+--Paciente
+codpac |     endereco     | codconv | telefone  |     nomepac     
+--------+------------------+---------+-----------+-----------------
+ 01     | Barbacena        | 001     | 9876-7123 | Barbara
+ 02     | Ritápolis        | 002     | 5476-7223 | João Ninguém
+ 03     | Barbacena        | 002     | 5476-7223 | José Alguém
+ 04     | São João Del-Rei | 002     | 9421-4220 | Maria do Bonfim
+ 05     | Barbacena        | 002     | 9428-1320 | Ilma Campos
+(5 rows)
+--Consulta
+ codpac |      datahora       | codmed |    diagnostico    | precoconsulta | pago 
+--------+---------------------+--------+-------------------+---------------+------
+ 05     | 2008-08-01 00:00:00 | 4      | nenhum            |         32.99 |    0
+ 02     | 2008-12-09 00:00:00 | 4      | resfriado         |         31.99 |    0
+ 03     | 2008-12-10 00:00:00 | 4      | resfriado         |         22.00 |    0
+ 04     | 2009-02-10 00:00:00 | 4      | resfriado         |         22.00 |    0
+ 001    | 2008-01-10 00:00:00 | 3      | infecção urinária |          0.00 |    0
+(5 rows)
+--Listagem após o comando
+nomeconv 
+----------
+(0 rows)
+
+32)Todos os convênios das tabelas citadas estão sendo usados.
+33)select NomeEspec from especialidade inner join
+medico on medico.codespec=especialidade.codespec;
+--Dada as tabelas
+--Especialidade
+codespec |     nomeespec      
+----------+--------------------
+ 031      | Cirurgião Plástico
+(1 row)
+--Medico
+codmed |  nomemedico  | codespec 
+--------+--------------+----------
+ 021    | Dr.Herbert   | 031 
+ 3      | Dr.Sabe Nada | 031 
+ 2      | Dr.Noé       | 031 
+ 4      | Dr.Fera      | 031 
+(4 rows)
+--Listagem após o comando
+ nomeespec      
+--------------------
+ Cirurgião Plástico
+ Cirurgião Plástico
+ Cirurgião Plástico
+ Cirurgião Plástico
+(4 rows)
+
+34)select NomeEspec, count(codmed) from especialidade inner join
+medico on especialidade.codespec=medico.codespec group by nomeespec;
+--Dado as tabelas de exemplo da questão anterior
+--Listagem após o comando
+nomeespec      | count 
+--------------------+-------
+ Cirurgião Plástico |     4
+(1 row)
+
+35)select nomemedico,count(dataHora),sum(precoconsulta) from medico inner join consulta
+on medico.codmed=consulta.codmed group by nomemedico;
+--Exemplos
+--Tabela Medico
+codmed |  nomemedico  | codespec 
+--------+--------------+----------
+ 021    | Dr.Herbert   | 031 
+ 3      | Dr.Sabe Nada | 031 
+ 2      | Dr.Noé       | 031 
+ 4      | Dr.Fera      | 031 
+(4 rows)
+--Tabela Consulta
+codpac |      datahora       | codmed |    diagnostico    | precoconsulta | pago 
+--------+---------------------+--------+-------------------+---------------+------
+ 05     | 2008-08-01 00:00:00 | 4      | nenhum            |         32.99 |    0
+ 02     | 2008-12-09 00:00:00 | 4      | resfriado         |         31.99 |    0
+ 03     | 2008-12-10 00:00:00 | 4      | resfriado         |         22.00 |    0
+ 04     | 2009-02-10 00:00:00 | 4      | resfriado         |         22.00 |    0
+ 001    | 2008-01-10 00:00:00 | 3      | infecção urinária |          0.00 |    0
+(5 rows)
+--Listagem após o comando
+nomemedico  | count |  sum   
+--------------+-------+--------
+ Dr.Fera      |     4 | 108.98
+ Dr.Sabe Nada |     1 |   0.00
+(2 rows)
+
+36)select count(precoconsulta),nomepac from paciente inner join
+consulta on paciente.codpac=consulta.codpac group by nomepac;
+--Dada as tabelas
+--Paciente
+codpac |     endereco     | codconv | telefone  |     nomepac     
+--------+------------------+---------+-----------+-----------------
+ 01     | Barbacena        | 001     | 9876-7123 | Barbara
+ 02     | Ritápolis        | 002     | 5476-7223 | João Ninguém
+ 03     | Barbacena        | 002     | 5476-7223 | José Alguém
+ 04     | São João Del-Rei | 002     | 9421-4220 | Maria do Bonfim
+ 05     | Barbacena        | 002     | 9428-1320 | Ilma Campos
+(5 rows)
+--Consulta
+codpac |      datahora       | codmed |    diagnostico    | precoconsulta | pago 
+--------+---------------------+--------+-------------------+---------------+------
+ 05     | 2008-08-01 00:00:00 | 4      | nenhum            |         32.99 |    0
+ 02     | 2008-12-09 00:00:00 | 4      | resfriado         |         31.99 |    0
+ 03     | 2008-12-10 00:00:00 | 4      | resfriado         |         22.00 |    0
+ 04     | 2009-02-10 00:00:00 | 4      | resfriado         |         22.00 |    0
+ 001    | 2008-01-10 00:00:00 | 3      | infecção urinária |          0.00 |    0
+(5 rows)
+--A ordenação será feita dessa forma:
+count |     nomepac     
+-------+-----------------
+     1 | Ilma Campos
+     1 | Maria do Bonfim
+     1 | José Alguém
+     1 | João Ninguém
+(4 rows)
+
+37)select distinct nomepac,nomeconv from paciente inner join
+postgres-# convenios on paciente.codconv=convenios.codconv inner join
+postgres-# consulta on paciente.codpac=consulta.codpac where Pago=0;
+--Tabela Paciente
+codpac |     endereco     | codconv | telefone  |     nomepac     
+--------+------------------+---------+-----------+-----------------
+ 01     | Barbacena        | 001     | 9876-7123 | Barbara
+ 02     | Ritápolis        | 002     | 5476-7223 | João Ninguém
+ 03     | Barbacena        | 002     | 5476-7223 | José Alguém
+ 04     | São João Del-Rei | 002     | 9421-4220 | Maria do Bonfim
+ 05     | Barbacena        | 002     | 9428-1320 | Ilma Campos
+(5 rows)
+--Junção das tabelas
+nomepac     |  nomeconv  
+-----------------+------------
+ Ilma Campos     | Cobre tudo
+ João Ninguém    | Cobre tudo
+ José Alguém     | Cobre tudo
+ Maria do Bonfim | Cobre tudo
+(4 rows)
+
+38)Nas tabelas registradas um paciente não foi atendido mais de uma vez
+39)
+--Dúvida nessa questão
+select nomemedico from medico inner join consulta
+on medico.codmed=consulta.codmed where codmed > any select
+codmed from consulta where codmed='3';
+40)Nenhum paciente consultou mais de uma vez.
+41)select nomemedico from medico inner join
+consulta on medico.codmed=consulta.codmed inner join
+paciente on consulta.codpac=paciente.codpac where nomepac='Zé Dodoi'
+--Não há nenhum paciente registrado como "Zé Dodói",logo:
+ nomemedico 
+------------
+(0 rows)
+
+42)select nomepac from paciente inner join consulta
+on paciente.codpac=consulta.codpac inner join medico
+on consulta.codmed=medico.codmed where nomemedico='Dr.Fera' union
+select nomepac from paciente inner join consulta
+on paciente.codpac=consulta.codpac inner join medico
+on consulta.codmed=medico.codmed where DataHora=current_timestamp;
+nomepac     
+-----------------
+ Ilma Campos
+ José Alguém
+ João Ninguém
+ Maria do Bonfim
+(4 rows)
+--Obs: Exemplo dado de tabelas de questões anteriores
+
+43)select nomemedico from medico inner join
+consulta on medico.codmed=consulta.codmed inner join
+paciente on consulta.codpac=paciente.codpac where nomepac!='Zé Dodoi'
+group by nomemedico order by nomemedico;
+nomemedico 
+------------
+ Dr.Fera
+ Dr.Herbert
+(2 rows)
+
+
+
 
 
 
