@@ -1,0 +1,59 @@
+--Sejam as seguintes tabelas:
+--Professor
+create table Professor(
+  numprof char(4),
+  profnome varchar(50),
+  profrua varchar(50),
+  profcidade varchar(20),
+  constraint pk_numprof primary
+  key(numprof)
+ );
+--Aluno
+create table Aluno(
+  numaluno char(4),
+  alunome varchar(50),
+  alurua varchar(50),
+  alucidade varchar(20),
+  constraint pk_numaluno primary
+  key(numaluno)
+);
+--Disciplina
+create table Disciplina(
+  coddisc char(4),
+  nomedisciplina varchar(15),
+  nomecurso varchar(15),
+  qtdeaulas INT,
+  constraint pk_coddisc primary
+  key(coddisc)
+);
+--Matricula
+create table Matricula(
+  coddisc char(4),
+  numaluno char(4),
+  ano INT,
+  foreign key(numaluno) references 
+  Aluno(numaluno),
+  foreign key(coddisc) references
+  Disciplina(coddisc),
+  primary key(ano)
+);
+--ProfDisc
+create table ProfDisc(
+  coddisc char(4),
+  numprof char(4),
+  ano INT,
+  foreign key(numprof) references 
+  Professor(numprof),
+  foreign key(coddisc) references
+  Disciplina(coddisc),
+  primary key(ano)
+);
+
+1)create view info_institucional as select nomedisciplina,
+profnome,profcidade,nomecurso from disciplina inner join
+profdisc on disciplina.coddisc=disciplina.coddisc inner join 
+professor on profdisc.numprof=professor.numprof where ano=2024;
+
+2)
+
+
