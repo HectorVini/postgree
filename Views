@@ -49,11 +49,11 @@ create table ProfDisc(
   primary key(ano)
 );
 
-1)create view info_institucional as select nomedisciplina,
+1)create or view info_institucional as select nomedisciplina,
 profnome,profcidade,nomecurso from disciplina inner join
 profdisc on disciplina.coddisc=disciplina.coddisc inner join 
 professor on profdisc.numprof=professor.numprof where ano=2024;
 
-2)
+2)create or replace view
 
 
