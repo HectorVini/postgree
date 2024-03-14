@@ -54,6 +54,36 @@ profnome,profcidade,nomecurso from disciplina inner join
 profdisc on disciplina.coddisc=disciplina.coddisc inner join 
 professor on profdisc.numprof=professor.numprof where ano=2024;
 
-2)create or replace view
+2)select nomedisciplina,profnome from info_institucional;
+--Considerando dadas inserções anteriores nas tabelas, veja um exemplo:
+nomedisciplina | profnome 
+----------------+----------
+ InfoInstrument | Marlon
+ InfoInstrument | Wender
+ InfoInstrument | Wender
+ InfoInstrument | Priscila
+ SO             | Marlon
+ SO             | Wender
+ SO             | Wender
+ SO             | Priscila
+ EDI            | Marlon
+ EDI            | Wender
+ EDI            | Wender
+ EDI            | Priscila
+ EDII           | Marlon
+ EDII           | Wender
+ EDII           | Wender
+ EDII           | Priscila
+ Estatística    | Marlon
+ Estatística    | Wender
+ Estatística    | Wender
+ Estatística    | Priscila
+(20 rows)
+
+3)create or replace view info2 as select
+alunome,nomedisciplina,alucidade,nomecurso from aluno
+inner join matricula on aluno.numaluno=matricula.numaluno
+inner join disciplina on matricula.coddisc=disciplina.coddisc
+where ano=2024;
 
 
