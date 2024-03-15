@@ -86,4 +86,91 @@ inner join matricula on aluno.numaluno=matricula.numaluno
 inner join disciplina on matricula.coddisc=disciplina.coddisc
 where ano=2024;
 
+4)select * from info2 where alucidade='Barbacena' 
+and nomecurso='TSI';
+--Exemplo parcial de view considerando determinadas inserções nas tabelas
+alunome | nomedisciplina | alucidade | nomecurso 
+---------+----------------+-----------+-----------
+ Pedro   | Estatística    | Barbacena | TSI
+ Soraia  | Estatística    | Barbacena | TSI
+ Soraia  | EDI            | Barbacena | TSI
+(3 rows)
 
+5)select * from info_institucional where nomecurso='TSI' and 
+profcidade!='Barbacena'
+--Exemplo de consulta vazia, pois todos os professores moram em Barbacena
+--Tabela Professor
+numprof | profnome | profcidade 
+---------+----------+-----------
+ 1       | Marlon  | Barbacena
+ 2       | Wender  | Barbacena
+ 3       | Ilma    | Barbacena
+ 4       | Priscila| Barbacena
+(4 rows)
+--Visualização da view vazia
+nomedisciplina | profnome | profcidade | nomecurso 
+----------------+----------+------------+-----------
+(0 rows)
+
+6)create or replace view qteaulasministradas
+as select profnome,count(qtdeaulas) from professor 
+inner join profdisc on professor.numprof=profdisc.numprof
+inner join disciplina on profdisc.coddisc=disciplina.coddisc;
+--Dada as tabelas:
+--Professor
+numprof | profnome | profrua | profcidade 
+---------+----------+---------+------------
+ 1       | Marlon   |         | Barbacena
+ 2       | Wender   |         | Barbacena
+ 3       | Ilma     |         | Barbacena
+ 4       | Priscila |         | Barbacena
+(4 rows)
+--ProfDisc
+coddisc | numprof | ano  
+---------+---------+------
+ 04      | 2       | 2024
+ 03      | 2       | 2023
+ 01      | 3       | 2019
+ 03      | 2       | 2024
+ 05      | 4       | 2024
+ 02      | 1       | 2024
+(6 rows)
+--Disciplina
+coddisc | nomedisciplina | nomecurso | qtdeaulas 
+---------+----------------+-----------+-----------
+ 05      | Estatística    | TSI       |       120
+ 04      | EDII           | TSI       |        60
+ 03      | EDI            | TSI       |        90
+ 02      | SO             | TSI       |       120
+ 01      | InfoInstrument | TSI       |        60
+(5 rows)
+
+--Exemplo de view
+profnome | qtdeaulas 
+----------+-----------
+ Wender   |        60
+ Wender   |        90
+ Ilma     |        60
+ Wender   |        90
+ Priscila |        60
+ Marlon   |       120
+(6 rows)
+-- As tabelas serão usadas como exemplos posteriores
+
+7)create view aulaporcurso as select
+profnome, qtdeaulas, nomecurso from professor inner join
+profdisc on professor.numprof=profdisc.numprof inner join
+disciplina on profdisc.coddisc=disciplina.coddisc;
+
+8)select * from aulaporcurso;
+profnome | qtdeaulas | nomecurso 
+----------+-----------+-----------
+ Wender   |        60 | TSI
+ Wender   |        90 | TSI
+ Ilma     |        60 | TSI
+ Wender   |        90 | TSI
+ Priscila |        60 | TSI
+ Marlon   |       120 | TSI
+(6 rows)
+
+9)
