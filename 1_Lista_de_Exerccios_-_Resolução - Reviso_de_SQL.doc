@@ -1,5 +1,5 @@
 1)create table Convenio(
-  CodConv char(4),
+  CodConv SERIAL,
   NomeConv varchar(50) not null,
   constraint pk_cod_conv primary key(CodConv),
   constraint ukNomeConv unique(NomeConv)
@@ -7,7 +7,7 @@
 
 
 create table Paciente(
-  CodPac char(4) not null,
+  CodPac SERIAL,
   NomePac varchar(50) not null,
   Endereco varchar(50) not null,
   CodConv varchar(50) not null,
@@ -25,13 +25,13 @@ create table Medicamento(
 );
 
 create table Especialidade(
-  CodEspec char(4) not null,
+  CodEspec SERIAL,
   NomeEspec varchar(50) not null,
   constraint pk_cod_espec primary key(CodEspec)
 );
 
 create table Medico(
-  CodMedico char(4) not null,
+  CodMedico SERIAL,
   NomeMed varchar(50) not null,
   CodEspec char(4) not null,
   constraint pk_cod_medico primary key(CodMedico),
@@ -40,12 +40,12 @@ create table Medico(
 );
 
 create table Consulta(
-  CodPac char(4) not null,
+  CodPac int,
   DataHora timestamp default now() check(DataHora<=now()),
-  CodMed char(4) not null,
-  Diagnostico varchar(20) not null,
+  CodMed int,
+  Diagnostico text,
   Preco decimal(5,2),
-  Pago integer default 1,
+  Pago boolean,
   constraint FK1CodPac foreign key(CodPac) references
   Paciente(CodPac),
   primary key(CodPac,DataHora),
@@ -94,7 +94,7 @@ codconv | nomeconv
  001     | Sus
 
 --Tabela Paciente
-Insert into Paciente(codpac,nomepac,endereco,codconv) values('01','Astolfo','Rua Quinze','01');
+Insert into Paciente(codpac,nomepac,endereco,codconv) values('01','Astolfo','Rua Quinze','1');
 codpac | nomepac |  endereco  | codconv 
 --------+---------+------------+---------
  01     | Astolfo | Rua Quinze | 001
@@ -128,7 +128,7 @@ codpac | nomepac  |      endereco      | codconv
  02     | Jamilson | Av Pereira Texeira | 001
 (1 row)
 
-6)delete from paciente where endereco != 'Barbacena';
+6)delete from paciente where endereco not like 'Barbacena';
 --Exemplo de uso
 --Antes do comando
 codpac | nomepac  |     endereco     | codconv 
@@ -487,8 +487,10 @@ nomemedico  | count |  sum
  Dr.Sabe Nada |     1 |   0.00
 (2 rows)
 
-36)select count(precoconsulta),nomepac from paciente inner join
-consulta on paciente.codpac=consulta.codpac group by nomepac;
+36)select p.nomepac,count(c*) as totalConsultas
+from paciente p inner consulta c on p.CodPac = c.CodPac
+group by p.NomePac
+order by TotalConsultas;
 --Dada as tabelas
 --Paciente
 codpac |     endereco     | codconv | telefone  |     nomepac     
@@ -518,8 +520,8 @@ count |     nomepac
 (4 rows)
 
 37)select distinct nomepac,nomeconv from paciente inner join
-postgres-# convenios on paciente.codconv=convenios.codconv inner join
-postgres-# consulta on paciente.codpac=consulta.codpac where Pago=0;
+convenios on paciente.codconv=convenios.codconv inner join
+consulta on paciente.codpac=consulta.codpac where Pago=FALSE;
 --Tabela Paciente
 codpac |     endereco     | codconv | telefone  |     nomepac     
 --------+------------------+---------+-----------+-----------------
@@ -542,14 +544,14 @@ nomepac     |  nomeconv
 from (paciente inner join consulta on paciente.codpac=consulta.codpac)
 group by nomepac
 order by count(nomepac) desc
-limit 1
+limit 1;
 --Exemplo após o comando
 nomepac   |  sum  
 -------------+-------
  Ilma Campos | 32.99
 (1 row)
 
-39)elect distinct nomepac, sum(precoconsulta)
+39)Select distinct nomepac, sum(precoconsulta)
 from (paciente inner join consulta on paciente.codpac=consulta.codpac)
 group by nomepac
 order by count(nomepac) asc
