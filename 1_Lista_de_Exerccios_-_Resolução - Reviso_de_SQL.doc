@@ -557,7 +557,21 @@ group by nomepac
 order by count(nomepac) asc
 limit 1;
 
-40)Nenhum paciente consultou mais de uma vez.
+40)SELECT 
+    p.NomePac,
+    COUNT(*) AS total_consultas
+FROM 
+    Paciente p
+JOIN 
+    Consulta c ON p.CodPac = c.CodPac
+WHERE 
+    EXTRACT(YEAR FROM c.DataHora) = EXTRACT(YEAR FROM CURRENT_DATE)
+GROUP BY 
+    p.CodPac, p.NomePac
+HAVING 
+    COUNT(*) > 10
+ORDER BY 
+    total_consultas ASC;
 41)select nomemedico from medico inner join
 consulta on medico.codmed=consulta.codmed inner join
 paciente on consulta.codpac=paciente.codpac where nomepac='Zé Dodoi'
