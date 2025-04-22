@@ -173,4 +173,28 @@ profnome | qtdeaulas | nomecurso
  Marlon   |       120 | TSI
 (6 rows)
 
-9)
+9)CREATE VIEW AlunosDisciplinasCursos AS SELECT
+a.alunome AS nome_aluno, d.nomecurso AS nome_curso,d.nomedisciplina AS nome_disciplina FROM Aluno a JOIN      
+Matricula m ON a.numaluno = m.numaluno JOIN Disciplina d ON m.coddisc = d.coddisc WHERE      
+m.ano = EXTRACT(YEAR FROM CURRENT_DATE);
+
+10)SELECT 
+    COUNT(DISTINCT nome_aluno) AS total_alunos_sistemas
+FROM 
+    AlunosDisciplinasCursos
+WHERE 
+    nome_curso = 'Sistemas para Internet';
+
+11)SELECT 
+    nome_aluno,
+    SUM(qtdeaulas) AS total_aulas
+FROM 
+    AlunosDisciplinasCursos adc
+JOIN 
+    Disciplina d ON adc.nome_disciplina = d.nomedisciplina
+WHERE 
+    nome_curso = 'Sistemas para Internet'
+GROUP BY 
+    nome_aluno
+ORDER BY 
+    nome_aluno;
